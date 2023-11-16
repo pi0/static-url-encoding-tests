@@ -1,0 +1,28 @@
+version: "2"
+
+services:
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./:/usr/share/nginx/html
+    ports:
+      - "8080:80"
+  apache:
+    image: httpd:alpine
+    volumes:
+      - ./:/usr/local/apache2/htdocs
+    ports:
+      - "8081:80"
+  caddy:
+    image: caddy:alpine
+    volumes:
+      - ./:/usr/share/caddy
+    ports:
+      - "8082:80"
+  node-serve:
+    image: node:18-alpine
+    command: sh -c "cd /http && npx --serve serve"
+    volumes:
+      - ./:/http
+    ports:
+      - "8083:3000"

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Static Asset Serving Tests</title>
+  </head>
+  <body>
+    <script type="module">
+      import { createApp, reactive } from "https://unpkg.com/petite-vue?module";
+
+      const state = reactive({
+        tests: [
+          "/fs-utf8/ç/index.html",
+          "/fs-utf8/%C3%A7/index.html",
+          "/fs-encoded/ç/index.html",
+          "/fs-encoded/%C3%A7/index.html",
+        ].map((path) => ({ path, result: "⌛" })),
+      });
+
+      createApp({ state }).mount();
+
+      for (const test of state.tests) {
+        await fetch(test.path)
+          .then((response) => {
+            test.result = response.ok ? "✅" : "❌";
+          })
+          .catch(() => {
+            test.result = "❌";
+          });
+      }
+    </script>
+    <div v-scope>
+      <ul>
+        <li v-for="test of state.tests">
+          {{ test.result }} <a :href="test.path">{{ test.path }}</a>
+        </li>
+      </ul>
+    </div>
+  </body>
+</html>
